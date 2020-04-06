@@ -14,24 +14,28 @@ MIN_DIF_BETWEEN_GO_AND_RELEASSE_SEC = 0.6;
 MAX_DIF_BETWEEN_GO_AND_RELEASSE_SEC = 2;
 MIN_DIF_BETWEEN_GO_AND_RELEASSE_TPNT = MIN_DIF_BETWEEN_GO_AND_RELEASSE_SEC * SAPMLE_RATE; 
 MAX_DIF_BETWEEN_GO_AND_RELEASSE_TPNT = MAX_DIF_BETWEEN_GO_AND_RELEASSE_SEC * SAPMLE_RATE;
-APPLY_RESAMPLING = true;
+
+APPLY_RESAMPLING = false;
+
 RESAMPLING_RATE = 250;
 LOW_CUTOFF = 4;
 HIGH_CUTOFF = 35;
 SD_for_ASR = 20;
-APPLY_DOUBLE_PERCISION = true;
+
+APPLY_DOUBLE_PERCISION = false;
+
 SET_FILE = [".set"];
 DATASET_NAME_CONVENTION = "subSUB_TRIAL_rawData";
 APPLY_HIGHPASS_FILTER = true;
-APPLY_CHANLOC = true;
+APPLY_CHANLOC = false;
 APPLY_CLEANLINE = false;
 APPLY_LOWPASS_FILTER = false;
 APPLY_BAND_FILTER = false;
 APPLY_ASR = true;
 SHOW_SPECTOPO_POST_ASR = false;
 APPLY_REREFERENCE_TO_AVERAGE = false;
-SHOW_SPECTOPO_POST_REREFERENCE = true;
-APPLY_CHANNELS_INTERPOLATE = true;
+SHOW_SPECTOPO_POST_REREFERENCE = false;
+APPLY_CHANNELS_INTERPOLATE = false;
 % epochs constants
 T_START = -2.4; % time of beginning of short epoch in sec.
 T_END = 0.05; % time of end of long short in sec.
@@ -124,7 +128,7 @@ if APPLY_CLEAR_NAN_ELECTRODES
 end
 
 [ALLEEG EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
-EEG = pop_saveset( EEG, 'filename',[file_name '.set'],'filepath',tempdir);
+EEG = pop_saveset( EEG, 'filename',[file_name '.set'],'filepath',tempdir); 
 
 pop_eegplot( EEG, 1, 1, 1);
 
