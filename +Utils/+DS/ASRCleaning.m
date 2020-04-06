@@ -1,6 +1,6 @@
 
 
-function [EEG, EEG_org, SNR, eliminatedChannels, signal, noise] = ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR)
+function [EEG, SNR, eliminatedChannels, signal, noise] = ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR)
 % ASRCleaning - this function perform ASR using clean_rawdata() it returns 
 % the channels that has been eliminated by ASR and SNR.
 	EEG_org = EEG;
