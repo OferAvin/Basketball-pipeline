@@ -1,3 +1,4 @@
+clear all
 %Constants
 SAPMLE_RATE = 300;
 MIN_DIF_BETWEEN_2_AND_3_SEC = 0.6;
@@ -27,7 +28,7 @@ EEG = deleteEventTypes (EEG, ALLEEG, CURRENTSET, 1);
 EEG = pop_resample (EEG, RESAMPLING_RATE);          %Downsampling
 [EEG, ALLEEG, CURRENTSET] = highPass_filter(EEG, ALLEEG,  CURRENTSET, LOW_CUTOFF,  file_name);
 
-%ChannelData
+% ChannelData
 if isfield(EEG.chaninfo, 'filename') == 0
     del = set_del();
     %set chanloc.
@@ -39,9 +40,9 @@ end
 
 
 
-[EEG, ALLEEG, CURRENTSET] = CleanLine(EEG, ALLEEG,  CURRENTSET);
+% [EEG, ALLEEG, CURRENTSET] = CleanLine(EEG, ALLEEG,  CURRENTSET);
 
-%[EEG, ALLEEG, CURRENTSET] = lowPass_filter(EEG, ALLEEG, HIGH_CUTOFF, file_name);
+[EEG, ALLEEG, CURRENTSET] = lowPass_filter(EEG, ALLEEG, HIGH_CUTOFF, file_name);
 %[EEG, ALLEEG, CURRENTSET] = bandFilteringData(EEG, ALLEEG, CURRENTSET, FREQUECY_TO_FILTER, file_name);
 
 %% Alingning events and cutting data byb events
@@ -246,11 +247,12 @@ end
 
 %this function perform ASR using clean_rawdata() it returns 
 %the channels that has been eliminated by ASR and SNR
-function [EEG, SNR, eliminatedChannels, signal, noise] = ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR)
-    EEG_clean = clean_rawdata(EEG, 5, -1, 0.8, 4, SD_for_ASR, -1 );
-    eliminatedChannels = findEliminatedChannels(EEG ,EEG_clean);
-    [SNR, signal, noise] = getSNR(EEG, EEG_clean, eliminatedChannels(2,:));
-    EEG = EEG_clean;
+function [EEG, SNR, eliminatedChannels, signal, noise] = ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR)   
+    preASR_EEG = EEG;
+    EEG = clean_artifacts(EEG, 'FlatlineCriterion','off','ChannelCriterion','off','LineNoiseCriterion','off','Highpass','off','BurstCriterion',20,'WindowCriterion','off','BurstRejection','off','Distance','Euclidian');
+%     EEG = clean_rawdata(EEG, 5, -1, 0.8, 4, SD_for_ASR, -1 );
+    eliminatedChannels = findEliminatedChannels(preASR_EEG ,EEG);
+    [SNR, signal, noise] = getSNR(preASR_EEG, EEG, eliminatedChannels(2,:));
     EEG = eeg_checkset( EEG );
 end
 

@@ -4,8 +4,7 @@ function [EEG, EEG_org, SNR, eliminatedChannels, signal, noise] = ASRCleaning (E
 % ASRCleaning - this function perform ASR using clean_rawdata() it returns 
 % the channels that has been eliminated by ASR and SNR.
 	EEG_org = EEG;
-    %EEG_clean = clean_rawdata(EEG, 5, -1, 0.8, 4, SD_for_ASR, -1 );
-    EEG_clean = clean_artifacts(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion',SD_for_ASR,'WindowCriterion','off','BurstRejection','off','Distance','Euclidian');
+    EEG = clean_artifacts(EEG, 'FlatlineCriterion','off','ChannelCriterion','off','LineNoiseCriterion','off','Highpass','off','BurstCriterion',20,'WindowCriterion','off','BurstRejection','off','Distance','Euclidian');
     eliminatedChannels = findEliminatedChannels(EEG ,EEG_clean);
     [SNR, signal, noise] = getSNR(EEG, EEG_clean, eliminatedChannels(2,:));
     EEG = EEG_clean;
