@@ -101,7 +101,7 @@ EEG = Utils.DS.aligningEvents(EEG);
 EEG = pop_rmdat( EEG, {'3' '8' '9'},[-4 0.06] ,0); % cutting data by event
 
 if APPLY_ASR
-	[EEG, EEG_org, SNR, eliminatedChannels, signal, noise] = Utils.DS.ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR);
+	[EEG, SNR, eliminatedChannels, signal, noise] = Utils.DS.ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR);
 end
 
 if APPLY_CHANNELS_INTERPOLATE
@@ -131,7 +131,9 @@ end
 EEG = pop_saveset( EEG, 'filename',[file_name '.set'],'filepath',tempdir); 
 
 
+
 pop_eegplot( EEG, 1, 1, 1);
+
 uiwait;
 
 eeglab redraw
