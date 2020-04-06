@@ -130,10 +130,8 @@ end
 [ALLEEG EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
 EEG = pop_saveset( EEG, 'filename',[file_name '.set'],'filepath',tempdir); 
 
-pop_eegplot( EEG, 1, 1, 1);
 
-figure(1);
-hold on;
+pop_eegplot( EEG, 1, 1, 1);
 uiwait;
 
 eeglab redraw
