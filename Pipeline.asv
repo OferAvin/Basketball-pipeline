@@ -46,7 +46,7 @@
     APPLY_ASR = true;
     SD_for_ASR = 15;
     SHOW_SPECTOPO_POST_ASR = false;
-    Line_Noise_Criterion = 1;
+    Lin-eNoiseCriterion
     %need more parameters
 
 % Interpolation paremeters
@@ -125,7 +125,7 @@ EEG = Utils.DS.aligningEvents(EEG);
 EEG = pop_rmdat( EEG, {'3' '8' '9'},[-4 0.06] ,0); % cutting data by event
 
 if APPLY_ASR
-	[EEG, EEG_org, SNR, eliminatedChannels, signal, noise] = Utils.DS.ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR, Line_Noise_Criterion);
+	[EEG, EEG_org, SNR, eliminatedChannels, signal, noise] = Utils.DS.ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR);
 end
 
 if APPLY_CHANNELS_INTERPOLATE
