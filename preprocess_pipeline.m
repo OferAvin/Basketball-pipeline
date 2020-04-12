@@ -1,5 +1,5 @@
 
-
+function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLEEG, EEG)
 %%%%%%% Experiment parameters %%%%%%%
 
 % Global
@@ -63,30 +63,22 @@
 	APPLY_CLEAR_NAN_ELECTRODES = false;
 	NAN_ELECTRODES_TH = 15;
 
-SET_FILE = [".set"];
 DATASET_NAME_CONVENTION = "subSUB_TRIAL_rawData";
-addpath(pwd);
-
-%%
 %%%%%%%%%%%%%%%%%%%%%%%%%% PIPELINE start %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %load eeglab
-[ALLEEG EEG CURRENTSET ALLCOM] = eeglab;
+if ~exist('ALLEEG', 'var')
+	[ALLEEG EEG CURRENTSET ALLCOM] = eeglab;
+else
+	[ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0 );
+end
+
 
 if APPLY_DOUBLE_PERCISION
 	pop_editoptions('option_single', 0); % set option to double precision
 end
 
-% load dataset file
-files = Utils.OS.load_input_files(SET_FILE, 'file');
-if isempty(files)
-	disp("Files not selected.");
-	return;
-end
-
-% get dataset info 
-ds_path = Utils.OS.construct_file_path(files, 'set');
-ds_name = Utils.OS.construct_file_name(files, 'set');
+[~,ds_name,~] = fileparts(ds_path);
 [sub, trail] = Utils.OS.extract_sub_trail_from_file(ds_name, DATASET_NAME_CONVENTION);
 file_name = ['sub' sub '_' trail '_ed'];
 
@@ -97,7 +89,7 @@ EEG = pop_loadset(ds_path);
 EEG = Utils.DS.orderingEvents(EEG); 
 EEG = Utils.DS.deleteEventTypes (EEG, ALLEEG, CURRENTSET, 1); % leaves only 2->3/8/9 trials 
 EEG = Utils.DS.checkGOToReleaseTimeDiff (EEG, MIN_DIF_BETWEEN_GO_AND_RELEASSE_TPNT, MAX_DIF_BETWEEN_GO_AND_RELEASSE_TPNT);
-EEG = Utils.DS.deleteEventTypes (EEG, ALLEEG, CURRENTSET, 1); % leaves only trials that meets time condition.
+EEG = Utils.DS.deleteEventTypes (EEG, ALLEEG, CURRENTSET, 1); % leaves only trials that meet time condition.
 
 % Cleaning The Data
 if APPLY_RESAMPLING
@@ -154,12 +146,8 @@ end
 
 [ALLEEG EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
 EEG = pop_saveset( EEG, 'filename',[file_name '.set'],'filepath',tempdir); 
+[ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0 );
 
+Utils.OS.copy_ds_to_userDir(file_name, tempdir, dest_dir);
 
-EEG = eeg_checkset( EEG );
-pop_eegplot( EEG, 1, 1, 1);
-
-uiwait;
-
-eeglab redraw
-Utils.OS.copy_ds_to_userDir(file_name, '');
+end
