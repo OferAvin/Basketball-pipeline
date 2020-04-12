@@ -16,11 +16,11 @@ end
 function eliminatedChannels = findEliminatedChannels(EEG ,EEG_clean)
 % findEliminatedChannels - this function get the EEG struct before and after ASR and finds
 % the removed channels.
-    chanNum = size(EEG.chanlocs,2);
-    cleanChanNum = size(EEG_clean.chanlocs,2);
+    [s1, s2] = size(EEG.chanlocs); chanNum = max(s1, s2);
+    [s1, s2] = size(EEG_clean.chanlocs); cleanChanNum = max(s1, s2);
     eliminatedChannels = repmat(" ",[2 chanNum-cleanChanNum]);
-    msg = char(chanNum-cleanChanNum+" "+ "channels was eliminated by clean_rawdata function ");
-    waitfor(msgbox(msg));
+%     msg = char(chanNum-cleanChanNum+" "+ "channels was eliminated by clean_rawdata function ");
+%     waitfor(msgbox(msg));
     cl_chanloc = extractfield(EEG_clean.chanlocs, 'labels');
     org_eeg_chanloc =  extractfield(EEG.chanlocs, 'labels');
     eliminatedChannels(1,:) = setdiff(org_eeg_chanloc,cl_chanloc);

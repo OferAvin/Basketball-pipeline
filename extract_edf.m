@@ -16,9 +16,9 @@ APPROVAL_REQUIRED = true;
 ENTER_SUB_TRIAL_INFO = true;
 
 %% Script code
-[ALLEEG EEG CURRENTSET ALLCOM] = eeglab;
+[ALLEEG, EEG, CURRENTSET, ALLCOM] = eeglab;
 
-files = Utils.OS.load_input_files(FILES_SUFFIXES);
+files = Utils.OS.load_input_files(FILES_SUFFIXES, '');
 if isempty(files)
 	disp("Files not selected.");
 	return;
@@ -26,7 +26,7 @@ end
 csv_path = Utils.OS.construct_file_path(files, 'csv');
 edf_path = Utils.OS.construct_file_path(files, 'edf');
 
-if isempty(csv_path) | isempty(edf_path)
+if isempty(csv_path) || isempty(edf_path)
 	return;
 end
 
@@ -49,7 +49,7 @@ EEG = eeg_checkset( EEG );
 EEG = pop_select( EEG, 'nochannel',{'Trigger'});
 
 if SET_CHANLOC
-clea	[EEG, ALLEEG] = Utils.DS.set_chanloc(EEG, ALLEEG, CURRENTSET);
+    [EEG, ALLEEG] = Utils.DS.set_chanloc(EEG, ALLEEG, CURRENTSET);
 end
 
 edf_file =  Utils.OS.construct_file_name(files, 'edf');
@@ -71,7 +71,7 @@ else
 end
 
 if save_final_dataset
-	Utils.OS.copy_ds_to_userDir(setname);
+	Utils.OS.copy_ds_to_userDir(setname,'');
 else
 	disp("Aborting operation.")
 end
