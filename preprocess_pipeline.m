@@ -1,5 +1,9 @@
 
 function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLEEG, EEG)
+% preprocess_pipeline - pipeline function. accepts a dataset ('.set') file
+% path, a destination directory for auto saving, ALLEEG and EEG.
+
+
 %%%%%%% Experiment parameters %%%%%%%
 
 % Global
