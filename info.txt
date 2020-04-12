@@ -1,22 +1,22 @@
 
-סדר פעולות פייפליין:
+	
+Sequence:
 
-1.טעינת eeglab
-2.טעינת קובץ dataset 
-3.סידור האיוונטים ומחיקת איוונטים פגומים
-4.ניקוי וסידור הדאטה: (עבור כל פעולה בתהליך הניקוי קיים פרמטר הקובע האם היא תפעל -true או שלא - false)
-	א. Resample לפרמטר RESAMPLING_RATE (מומלץ 250)
-	ב.High-Pass filter - אם הפרמטר דלוק
-	ג.יבוא chanlocs 
-	ד.CleanLine/Low-Pass filter - קיים פרמטר נוסף לBand-pass filter
-	ה.סידור איוונט הזריקה (3) אל ארטיפקט 'the jump'
-	ו.חיתוך הדאטה למקטעים של 4.06 שניות - 0.06 שניות לאחר זריקה, 4 שניות לפני זריקה
-	ז.ניקוי הערוצים על ידי ASR - פרמטר הASR נקבע על ידי SD_for_ASR.
-	ח.אינטרפולציה
-	ט.רירפרנס לממוצע.
-5. יצירת אפוקים: משך זמן האפוק נקבעים לפי T_START ו T_END ובייחס לאיוונט הזריקה. 
-6. גרפים לבדיקת התוצאות בצורה ויזואלית.
-7.שמירת התוצאות.
-	
-	
-	
+1.Loading eeglab	
+2.Loading dataset
+3.Event ordering: (each of the following has a parameter that can be define as True or False)
+	a. erasing bad sequnces of events
+	b. erasing events sequances which have too short interval between 2 and 3 events
+4.Cleaning the data
+	a.resample data to RESAMPLING_RATE parameter.
+	b.filter data - highpass-filter/band filter.
+	c.chanloc import.
+	d.filter data - cleanline/lowpass-filter/band filter.
+	e.aligining events to "thejump" artifact.
+	f.cutting the data - 4 secs before a throw event and 0.06 secs after a throw event. 
+	g.ASR - using SD_for_ASR parameter.
+	h.interpulation.
+	i.rereferance to avarage.
+5.Create epochs - using T_start and T_end parameters for determening epochs length according to a throw event.
+6.Plots for a visual check.
+7.Saving results.
