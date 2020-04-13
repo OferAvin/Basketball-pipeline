@@ -84,7 +84,8 @@ function [files_selected, type_selected] = enter_file(files_selected, name, path
 	files_index = length(files_selected) + 1; 
 	files_selected(files_index).name = name;
 	files_selected(files_index).path = path;
-    files_selected(files_index).file = [path, name];
+    del = Utils.OS.get_delimiter();
+    files_selected(files_index).file = [path, del, name];
 	t = strsplit(name,"."); t = char(t(length(t)));
 	files_selected(files_index).type = t;
 	type_selected = "."+t;
