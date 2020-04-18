@@ -87,7 +87,14 @@ end
 % get dataset info 
 ds_path = Utils.OS.construct_file_path(files, 'set');
 ds_name = Utils.OS.construct_file_name(files, 'set');
-[sub, trail] = Utils.OS.extract_sub_trail_from_file(ds_name, DATASET_NAME_CONVENTION);
+if isempty(EEG.subject) || isempty(EEG.session)
+    [sub, trail] = Utils.OS.extract_sub_trail_from_file(ds_name, DATASET_NAME_CONVENTION);
+    EEG.subject = sub;
+    EEG.session = trail;
+else
+    sub = EEG.subject;
+    trail = EEG.session;
+end
 file_name = ['sub' sub '_' trail '_ed'];
 
 % load dataset to eeglab
