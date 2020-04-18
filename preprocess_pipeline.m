@@ -69,7 +69,6 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
 
 DATASET_NAME_CONVENTION = "subSUB_TRIAL_rawData";
 %%%%%%%%%%%%%%%%%%%%%%%%%% PIPELINE start %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %load eeglab
 if ~exist('ALLEEG', 'var')
 	[ALLEEG EEG CURRENTSET ALLCOM] = eeglab;
@@ -83,7 +82,14 @@ if APPLY_DOUBLE_PERCISION
 end
 
 [~,ds_name,~] = fileparts(ds_path);
-[sub, trail] = Utils.OS.extract_sub_trail_from_file(ds_name, DATASET_NAME_CONVENTION);
+if isempty(EEG.subject) || isempty(EEG.session)
+    [sub, trail] = Utils.OS.extract_sub_trail_from_file(ds_name, DATASET_NAME_CONVENTION);
+    EEG.subject = sub;
+    EEG.session = trail;
+else
+    sub = EEG.subject;
+    trail = EEG.session;
+end
 file_name = ['sub' sub '_' trail '_ed'];
 
 % load dataset to eeglab
@@ -153,5 +159,4 @@ EEG = pop_saveset( EEG, 'filename',[file_name '.set'],'filepath',tempdir);
 [ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0 );
 
 Utils.OS.copy_ds_to_userDir(file_name, tempdir, dest_dir);
-
 end
