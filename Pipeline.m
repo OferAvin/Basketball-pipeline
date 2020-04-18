@@ -87,6 +87,10 @@ end
 % get dataset info 
 ds_path = Utils.OS.construct_file_path(files, 'set');
 ds_name = Utils.OS.construct_file_name(files, 'set');
+
+% load dataset to eeglab
+EEG = pop_loadset(ds_path);
+
 if isempty(EEG.subject) || isempty(EEG.session)
     [sub, trail] = Utils.OS.extract_sub_trail_from_file(ds_name, DATASET_NAME_CONVENTION);
     EEG.subject = sub;
@@ -97,8 +101,6 @@ else
 end
 file_name = ['sub' sub '_' trail '_ed'];
 
-% load dataset to eeglab
-EEG = pop_loadset(ds_path);
 
 % handle events
 EEG = Utils.DS.orderingEvents(EEG); 
