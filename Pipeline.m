@@ -169,4 +169,4 @@ pop_eegplot( EEG, 1, 1, 1);
 uiwait;
 
 eeglab redraw
-Utils.OS.copy_ds_to_userDir(file_name, '');
+Utils.OS.copy_ds_to_userDir(file_name, tempdir, '');

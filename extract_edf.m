@@ -71,7 +71,7 @@ else
 end
 
 if save_final_dataset
-	Utils.OS.copy_ds_to_userDir(setname,'');
+	Utils.OS.copy_ds_to_userDir(setname, tempdir,'');
 else
 	disp("Aborting operation.")
 end
