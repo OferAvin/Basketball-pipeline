@@ -81,6 +81,9 @@ if APPLY_DOUBLE_PERCISION
 	pop_editoptions('option_single', 0); % set option to double precision
 end
 
+% load dataset to eeglab
+EEG = pop_loadset(ds_path);
+
 [~,ds_name,~] = fileparts(ds_path);
 if isempty(EEG.subject) || isempty(EEG.session)
     [sub, trail] = Utils.OS.extract_sub_trail_from_file(ds_name, DATASET_NAME_CONVENTION);
@@ -92,8 +95,7 @@ else
 end
 file_name = ['sub' sub '_' trail '_ed'];
 
-% load dataset to eeglab
-EEG = pop_loadset(ds_path);
+
 
 % handle events
 EEG = Utils.DS.orderingEvents(EEG); 
