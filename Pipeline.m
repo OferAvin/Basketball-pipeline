@@ -43,7 +43,7 @@
 	APPLY_CHANLOC = false;
 
 % Cleanline parameters    
-    APPLY_CLEANLINE = true;
+    APPLY_CLEANLINE = false;
    
 % ASR parameters
     APPLY_ASR = true;
@@ -135,6 +135,7 @@ end
 
 EEG = Utils.DS.aligningEvents(EEG);
 EEG = pop_rmdat( EEG, {'3' '8' '9'},[-4 0.06] ,0); % cutting data by event
+EEG = Utils.DS.strToDoubleEvent(EEG); %change event type back to double
 
 if APPLY_ASR
 	[EEG, EEG_org, SNR, eliminatedChannels, signal, noise] = Utils.DS.ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR, Line_Noise_Criterion);
