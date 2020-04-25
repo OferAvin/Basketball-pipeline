@@ -93,8 +93,8 @@ EEG = pop_loadset(ds_path);
 
 if isempty(EEG.subject) || isempty(EEG.session)
     [sub, trail] = Utils.OS.extract_sub_trail_from_file(ds_name, DATASET_NAME_CONVENTION);
-    EEG.subject = sub;
-    EEG.session = trail;
+    EEG.subject = str2double(sub);
+    EEG.session = str2double(trail);
 else
     sub = EEG.subject;
     trail = EEG.session;
