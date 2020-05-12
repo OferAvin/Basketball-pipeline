@@ -130,12 +130,7 @@ end
 
 EEG = Utils.DS.aligningEvents(EEG);
 EEG = pop_rmdat( EEG, {'3' '8' '9'},[-4 0.06] ,0); % cutting data by event
-
-evnts = extractfield(EEG.event, 'type'); % extract the data
-evnts = strrep(evnts, 'boundary', '1'); % change strings no char number
-evnts = str2double(evnts); % change string to double array
-evnts = num2cell(evnts); % change array back to cell
-[EEG.event.type] = evnts{:}; % override EEG.event.type to double
+EEG = Utils.DS.strToDoubleEvent(EEG); %change event type back to double
 
 if APPLY_ASR
 	[EEG, EEG_org, SNR, eliminatedChannels, signal, noise] = Utils.DS.ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR, Line_Noise_Criterion);
