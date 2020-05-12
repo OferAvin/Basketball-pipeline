@@ -44,10 +44,10 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
     APPLY_BAND_FILTER = false;
 
 % Channloc info parameters
-	APPLY_CHANLOC = false;
+	APPLY_CHANLOC = true;
 
 % Cleanline parameters    
-    APPLY_CLEANLINE = true;
+    APPLY_CLEANLINE = false;
    
 % ASR parameters
     APPLY_ASR = true;
