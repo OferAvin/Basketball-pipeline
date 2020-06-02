@@ -47,7 +47,7 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
 	APPLY_CHANLOC = true;
 
 % Cleanline parameters    
-    APPLY_CLEANLINE = false;
+    APPLY_CLEANLINE = true;
    
 % ASR parameters
     APPLY_ASR = true;
@@ -87,8 +87,8 @@ EEG = pop_loadset(ds_path);
 [~,ds_name,~] = fileparts(ds_path);
 if isempty(EEG.subject) || isempty(EEG.session)
     [sub, trail] = Utils.OS.extract_sub_trail_from_file(ds_name, DATASET_NAME_CONVENTION);
-    EEG.subject = sub;
-    EEG.session = trail;
+    EEG.subject = str2double(sub);
+    EEG.session = str2double(trail);
 else
     sub = EEG.subject;
     trail = EEG.session;
@@ -139,6 +139,8 @@ if APPLY_ASR
 	end
 end
 
+EEG = Utils.DS.creatingEpochs(EEG, ALLEEG, CURRENTSET, T_START, T_END, file_name);
+
 if APPLY_CHANNELS_INTERPOLATE
 	EEG = pop_interp(EEG, EEG_org.chanlocs, 'spherical');
 end
@@ -151,7 +153,7 @@ if APPLY_REREFERENCE_TO_AVERAGE
 	end
 end
 
-EEG = Utils.DS.creatingEpochs(EEG, ALLEEG, CURRENTSET, T_START, T_END, file_name);
+
 
 if APPLY_CLEAR_NAN_ELECTRODES
 	EEG = Utils.DS.clearEmptyEpochs(EEG, NAN_ELECTRODES_TH);
