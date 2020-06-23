@@ -27,6 +27,7 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
     T_START = -2.4; % time of beginning of short epoch in sec.
     T_END = 0.05; % time of end of long short in sec.
 
+    
 %%%%%%% Pipeline parameters %%%%%%%
 
 % Double percision parameters
@@ -68,14 +69,25 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
 	NAN_ELECTRODES_TH = 15;
     
 % Clean epochs
+    MAX_BAD_CHANNEL_PER_EPOCH = 4;
+    MAX_BAD_EPOCHS_PER_CHANNEL = 0.3; % in 0 to 1 scale.
     APPLY_CLEAN_CHANNEL_BY_TH = true;
     NEG_TH = -35;
     POS_TH = 35;
     WIN_STRAT = T_START;
     WIN_END = T_END;
-    MAX_BAD_CHANNEL_PER_EPOCH = 4;
-    MAX_BAD_EPOCHS_PER_CHANNEL = 0.3; % in 0 to 1 scale.
-
+    APPLY_CLEAN_CHANNEL_SPECTRA_TH = true;
+    SPEC.method = "wavelet"; % wavelet or bandpower.
+    SPEC.freq_resolution = 40;
+    NSD = 2;
+    
+% Bands ranges
+    bands_range.theta = [4 8];
+    bands_range.alpha = [8 15];
+    bands_range.beta = [15 30];
+    bands = struct2cell(bands_range);
+    
+    
 DATASET_NAME_CONVENTION = "subSUB_TRIAL_rawData";
 %%%%%%%%%%%%%%%%%%%%%%%%%% PIPELINE start %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %load eeglab
@@ -152,6 +164,10 @@ EEG = Utils.DS.creatingEpochs(EEG, ALLEEG, CURRENTSET, T_START, T_END, file_name
 
 if APPLY_CLEAN_CHANNEL_BY_TH
     [EEG, ALLEEG, CURRENTSET] = Utils.DS.reject_by_tresh(EEG, ALLEEG, CURRENTSET, NEG_TH, POS_TH, WIN_STRAT, WIN_END, MAX_BAD_CHANNEL_PER_EPOCH, MAX_BAD_EPOCHS_PER_CHANNEL);
+end
+
+if APPLY_CLEAN_CHANNEL_SPECTRA_TH
+    [EEG, ALLEEG, CURRENTSET] = Utils.DS.reject_by_spec(EEG, ALLEEG, CURRENTSET, bands, SPEC, NSD);
 end
 
 
