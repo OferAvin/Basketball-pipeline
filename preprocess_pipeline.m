@@ -58,7 +58,7 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
     %need more parameters
 
 % Interpolation parameters
-    APPLY_CHANNELS_INTERPOLATE = false;
+    APPLY_CHANNELS_INTERPOLATE = true;
 
 % Re-referencing to average parameters
     APPLY_REREFERENCE_TO_AVERAGE = false;
@@ -77,8 +77,10 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
     WIN_STRAT = T_START;
     WIN_END = T_END;
     APPLY_CLEAN_CHANNEL_SPECTRA_TH = true;
-    SPEC.method = "wavelet"; % wavelet or bandpower.
-    SPEC.freq_resolution = 40;
+    SPECRA.method = "wavelet"; % wavelet or bandpower.
+    SPECRA.freq_resolution = 40;
+    SPECRA.tStart = -2100;
+    SPECRA.tEnd = 0;
     NSD = 2;
     
 % Bands ranges
@@ -154,7 +156,8 @@ EEG = pop_rmdat( EEG, {'3' '8' '9'},[-4 0.06] ,0); % cutting data by event
 EEG = Utils.DS.strToDoubleEvent(EEG); %change event type back to double
 
 if APPLY_ASR
-	[EEG, EEG_org, SNR, eliminatedChannels, signal, noise] = Utils.DS.ASRCleaning (EEG, ALLEEG, CURRENTSET, SD_for_ASR, Line_Noise_Criterion);
+	[EEG, EEG_org, SNR, eliminatedChannels, signal, noise] = Utils.DS.ASRCleaning (EEG, ALLEEG, CURRENTSET,...
+        SD_for_ASR, Line_Noise_Criterion);
 	if SHOW_SPECTOPO_POST_ASR
 		figure; pop_spectopo(EEG, 1, [0      482343.3333], 'EEG' , 'freq', [6 10 22], 'freqrange',[2 25],'electrodes','off');
 	end
@@ -163,14 +166,14 @@ end
 EEG = Utils.DS.creatingEpochs(EEG, ALLEEG, CURRENTSET, T_START, T_END, file_name);
 
 if APPLY_CLEAN_CHANNEL_BY_TH
-    [EEG, ALLEEG, CURRENTSET] = Utils.DS.reject_by_tresh(EEG, ALLEEG, CURRENTSET, NEG_TH, POS_TH, WIN_STRAT, WIN_END, MAX_BAD_CHANNEL_PER_EPOCH, MAX_BAD_EPOCHS_PER_CHANNEL);
+    [EEG, ALLEEG, CURRENTSET] = Utils.DS.reject_by_tresh(EEG, ALLEEG, CURRENTSET, NEG_TH, POS_TH,...
+        WIN_STRAT, WIN_END, MAX_BAD_CHANNEL_PER_EPOCH, MAX_BAD_EPOCHS_PER_CHANNEL);
 end
 
 if APPLY_CLEAN_CHANNEL_SPECTRA_TH
-    [EEG, ALLEEG, CURRENTSET] = Utils.DS.reject_by_spec(EEG, ALLEEG, CURRENTSET, bands, SPEC, NSD);
+    [EEG, ALLEEG, CURRENTSET] = Utils.DS.reject_by_spec(EEG, ALLEEG, CURRENTSET, bands, SPECRA, NSD,...
+        MAX_BAD_CHANNEL_PER_EPOCH, MAX_BAD_EPOCHS_PER_CHANNEL);
 end
-
-
 
 if APPLY_CHANNELS_INTERPOLATE
 	EEG = pop_interp(EEG, EEG_org.chanlocs, 'spherical');
