@@ -2,9 +2,9 @@ function [rejfreqE] = get_by_wavelet(EEG, bands, specra, nSD)
 % get_by_wavelet - this function performs wavelet spectral analysis and
 %   returns a logical matrix of rejected trials.
     low_freq = bands{1,1}(1); high_freq = bands{end,1}(2); elec = 1:EEG.nbchan;
-    [electrodes_tf, freqs]= arrayfun(@(x) get_tf_data(EEG, x, high_freq, low_freq, specra.freq_resolution),...
+    [electrodes_tf, freqs]= arrayfun(@(x) get_tf_data(EEG, x, high_freq, low_freq, specra.freq_resolution,specra),...
         elec, 'un', false); % get spectral analysis to each electrode.
-    rel_electrodes_tf = cellfun(@(x) get_relative_tf(x, bands, freqs{1,1}, specra), electrodes_tf, 'un', false); % transform to relative power.
+    rel_electrodes_tf = cellfun(@(x) get_relative_tf(x, bands, freqs{1,1}), electrodes_tf, 'un', false); % transform to relative power.
     elec_bands_bounds = cellfun(@(x) get_band_bounds(x, nSD), rel_electrodes_tf, 'un', false); % get for each signal, bands' bounds.
     rejfreqE = cellfun(@(x,y) get_rej_trials(x, y), rel_electrodes_tf, elec_bands_bounds, 'un', false); % find rejected trials.
     rejfreqE = cell2mat(rejfreqE');
@@ -12,10 +12,10 @@ end
 
 function [tf_data, freqs] = get_tf_data(EEG, chan, high_freq, low_freq, freq_resolution, specra)
 % get_tf_data - this function perform wavelet spectral analysis.
-    [~,~,~,times,freqs,~,~,tf_data]= pop_newtimef( EEG, 1, chan, [specra.tStart    spectra.tEnd], [3         0.5] , 'topovec', 1, 'elocs', EEG.chanlocs, 'chaninfo', EEG.chaninfo, 'caption', EEG.chanlocs(chan).labels, 'baseline',[-2300 -1800], 'freqs', [low_freq high_freq],'nfreqs', freq_resolution, 'plotphase', 'off', 'padratio', 1,'trialbase','on');
+   figure; [~,~,~,times,freqs,~,~,tf_data]= pop_newtimef( EEG, 1, chan, [specra.tStart    specra.tEnd], [3         0.5] , 'topovec', 1, 'elocs', EEG.chanlocs, 'chaninfo', EEG.chaninfo, 'caption', EEG.chanlocs(chan).labels, 'baseline',[-2300 -1800], 'freqs', [low_freq high_freq],'nfreqs', freq_resolution, 'plotphase', 'off', 'padratio', 1,'trialbase','off');
     close;
     tf_data = abs(tf_data).^2;
-    tf_data = newtimeftrialbaseln(tf_data, times, 'baseline', [-2300 -1800],'trialbase','on');
+    tf_data = newtimeftrialbaseln(tf_data, times, 'baseline', [-2300 -1800],'trialbase','off');
 end
 
 function [rel_tf] = get_relative_tf(tf_data, bands, freqs)

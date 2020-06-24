@@ -25,7 +25,7 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
     
 % Epochs constants
     T_START = -2.4; % time of beginning of short epoch in sec.
-    T_END = 0.05; % time of end of long short in sec.
+    T_END = 0.5; % time of end of long short in sec.
 
     
 %%%%%%% Pipeline parameters %%%%%%%
@@ -52,16 +52,16 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
    
 % ASR parameters
     APPLY_ASR = true;
-    SD_for_ASR = 15;
+    SD_for_ASR = 13;
     SHOW_SPECTOPO_POST_ASR = false;
-    Line_Noise_Criterion = 1;
+    Line_Noise_Criterion = 5;
     %need more parameters
 
 % Interpolation parameters
     APPLY_CHANNELS_INTERPOLATE = true;
 
 % Re-referencing to average parameters
-    APPLY_REREFERENCE_TO_AVERAGE = false;
+    APPLY_REREFERENCE_TO_AVERAGE = true;
     SHOW_SPECTOPO_POST_REREFERENCE = false;
 
 % Remove empty epochs parameters
@@ -69,24 +69,24 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
 	NAN_ELECTRODES_TH = 15;
     
 % Clean epochs
-    MAX_BAD_CHANNEL_PER_EPOCH = 4;
-    MAX_BAD_EPOCHS_PER_CHANNEL = 0.3; % in 0 to 1 scale.
+    MAX_BAD_CHANNEL_PER_EPOCH = 10;
+    MAX_BAD_EPOCHS_PER_CHANNEL = 0.99; % in 0 to 1 scale.
     APPLY_CLEAN_CHANNEL_BY_TH = true;
-    NEG_TH = -35;
-    POS_TH = 35;
-    WIN_STRAT = T_START;
-    WIN_END = T_END;
+    NEG_TH = -27;
+    POS_TH = 27;
+    WIN_STRAT = -2300;
+    WIN_END = 0;
     APPLY_CLEAN_CHANNEL_SPECTRA_TH = true;
     SPECRA.method = "wavelet"; % wavelet or bandpower.
     SPECRA.freq_resolution = 40;
-    SPECRA.tStart = -2100;
+    SPECRA.tStart = -2300;
     SPECRA.tEnd = 0;
     NSD = 2;
     
 % Bands ranges
     bands_range.theta = [4 8];
-    bands_range.alpha = [8 15];
-    bands_range.beta = [15 30];
+    bands_range.alpha = [8 13];
+    bands_range.beta = [13 30];
     bands = struct2cell(bands_range);
     
     
@@ -152,7 +152,7 @@ if APPLY_BAND_FILTER
 end
 
 EEG = Utils.DS.aligningEvents(EEG);
-EEG = pop_rmdat( EEG, {'3' '8' '9'},[-4 0.06] ,0); % cutting data by event
+EEG = pop_rmdat( EEG, {'3' '8' '9'},[-4 T_END+0.05] ,0); % cutting data by event
 EEG = Utils.DS.strToDoubleEvent(EEG); %change event type back to double
 
 if APPLY_ASR
