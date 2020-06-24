@@ -6,7 +6,7 @@ function [EEG, EEG_org, SNR, eliminatedChannels, signal, noise] = ASRCleaning (E
 	EEG_org = EEG;
 	rng(0);
     %EEG = clean_artifacts(EEG, 'FlatlineCriterion',5,'ChannelCriterion','off','LineNoiseCriterion',Line_Noise_Criterion,'Highpass','off','BurstCriterion',SD_for_ASR,'WindowCriterion','off','BurstRejection','off','Distance','Euclidian');
-    EEG = clean_artifacts(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',Line_Noise_Criterion,'Highpass','off','BurstCriterion',SD_for_ASR,'WindowCriterion','off','BurstRejection','off','Distance','Euclidian');
+    EEG = clean_artifacts(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.01,'LineNoiseCriterion',Line_Noise_Criterion,'Highpass','off','BurstCriterion',SD_for_ASR,'WindowCriterion','off','BurstRejection','off','Distance','Euclidian');
     eliminatedChannels = findEliminatedChannels(EEG_org ,EEG);
     [SNR, signal, noise] = getSNR(EEG_org ,EEG, eliminatedChannels(2,:));
 	EEG.etc.SNR = SNR;
