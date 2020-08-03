@@ -39,7 +39,7 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
 
 % Filter parameters
     LOW_CUTOFF = 4;
-    HIGH_CUTOFF = 30;
+    HIGH_CUTOFF = 40;
     APPLY_HIGHPASS_FILTER = true;
     APPLY_LOWPASS_FILTER = true;
     APPLY_BAND_FILTER = false;
@@ -52,7 +52,7 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
    
 % ASR parameters
     APPLY_ASR = true;
-    SD_for_ASR = 13;
+    SD_for_ASR = 11;
     SHOW_SPECTOPO_POST_ASR = false;
     Line_Noise_Criterion = 5;
     %need more parameters
@@ -72,12 +72,12 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
     MAX_BAD_CHANNEL_PER_EPOCH = 10;
     MAX_BAD_EPOCHS_PER_CHANNEL = 0.99; % in 0 to 1 scale.
     APPLY_CLEAN_CHANNEL_BY_TH = true;
-    NEG_TH = -27;
-    POS_TH = 27;
+    NEG_TH = -23;
+    POS_TH = 23;
     WIN_STRAT = -2300;
     WIN_END = 0;
-    APPLY_CLEAN_CHANNEL_SPECTRA_TH = true;
-    SPECRA.method = "wavelet"; % wavelet or bandpower.
+    APPLY_CLEAN_CHANNEL_SPECTRA_TH = false;
+    SPECRA.method = "bandpower"; % wavelet or bandpower.
     SPECRA.freq_resolution = 40;
     SPECRA.tStart = -2300;
     SPECRA.tEnd = 0;
