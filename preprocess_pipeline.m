@@ -27,6 +27,8 @@ function [ALLEEG, EEG, CURRENTSET] = preprocess_pipeline(ds_path, dest_dir, ALLE
     T_START = -2.4; % time of beginning of short epoch in sec.
     T_END = 0.5; % time of end of long short in sec.
 
+    % setting 'the jump' event true a false.
+    APPLY_EVENTS_ALIGNMENT = true;
     
 %%%%%%% Pipeline parameters %%%%%%%
 
@@ -123,8 +125,14 @@ file_name = ['sub' sub '_' trail '_ed'];
 % handle events
 EEG = Utils.DS.orderingEvents(EEG); 
 EEG = Utils.DS.deleteEventTypes (EEG, ALLEEG, CURRENTSET, 1); % leaves only 2->3/8/9 trials 
+
+% issue serial numbers for events
+[EEG] = Utils.DS.issue_events_serials(EEG);
+
 EEG = Utils.DS.checkGOToReleaseTimeDiff (EEG, MIN_DIF_BETWEEN_GO_AND_RELEASSE_TPNT, MAX_DIF_BETWEEN_GO_AND_RELEASSE_TPNT);
 EEG = Utils.DS.deleteEventTypes (EEG, ALLEEG, CURRENTSET, 1); % leaves only trials that meet time condition.
+
+EEG.etc.logger.eventsPreAlign = EEG.event;
 
 % Cleaning The Data
 if APPLY_RESAMPLING
@@ -151,7 +159,10 @@ if APPLY_BAND_FILTER
 	[EEG, ALLEEG, CURRENTSET] = Utils.DS.bandFilteringData(EEG, ALLEEG, CURRENTSET, FREQUECY_TO_FILTER, file_name);
 end
 
-EEG = Utils.DS.aligningEvents(EEG);
+if APPLY_EVENTS_ALIGNMENT
+    EEG = Utils.DS.aligningEvents(EEG);
+end
+
 EEG = pop_rmdat( EEG, {'3' '8' '9'},[-4 T_END+0.05] ,0); % cutting data by event
 EEG = Utils.DS.strToDoubleEvent(EEG); %change event type back to double
 
@@ -164,11 +175,13 @@ if APPLY_ASR
 end
 
 EEG = Utils.DS.creatingEpochs(EEG, ALLEEG, CURRENTSET, T_START, T_END, file_name);
+EEG.etc.logger.eventsPostEpochs = EEG.event;
 
 if APPLY_CLEAN_CHANNEL_BY_TH
     [EEG, ALLEEG, CURRENTSET] = Utils.DS.reject_by_tresh(EEG, ALLEEG, CURRENTSET, NEG_TH, POS_TH,...
         WIN_STRAT, WIN_END, MAX_BAD_CHANNEL_PER_EPOCH, MAX_BAD_EPOCHS_PER_CHANNEL);
 end
+EEG.etc.logger.eventsPostCleanTH = EEG.event;
 
 if APPLY_CLEAN_CHANNEL_SPECTRA_TH
     [EEG, ALLEEG, CURRENTSET] = Utils.DS.reject_by_spec(EEG, ALLEEG, CURRENTSET, bands, SPECRA, NSD,...
@@ -178,6 +191,7 @@ end
 if APPLY_CHANNELS_INTERPOLATE
 	EEG = pop_interp(EEG, EEG_org.chanlocs, 'spherical');
 end
+EEG.etc.logger.eventsPostCleanSpectra = EEG.event;
 
 
 if APPLY_REREFERENCE_TO_AVERAGE
@@ -197,5 +211,9 @@ end
 EEG = pop_saveset( EEG, 'filename',[file_name '.set'],'filepath',tempdir); 
 [ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0 );
 
-Utils.OS.copy_ds_to_userDir(file_name, tempdir, dest_dir);
+% if dest_dir is 0, we skip saving the dataset as a '.set' file.
+if dest_dir~=0
+    Utils.OS.copy_ds_to_userDir(file_name, tempdir, dest_dir);
+end
+
 end
